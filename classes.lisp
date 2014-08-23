@@ -47,13 +47,11 @@
         (jx (x j)) (jy (y j))
         (isize (size i)) (jsize (size j))
         (ishape (shape i)) (jshape (shape j)))
-    (format t "~a ~a~%" ishape jshape)
     (cond
       ((and
         (eq ishape :circle)
-        (eq jshape :circle)) (square-collision?
+        (eq jshape :circle)) (circle-collision?
                               (list ix iy isize)
                               (list jx jy jsize)))
       ;; todo: bother with other shapes later
       (t t))))
- 
