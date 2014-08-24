@@ -1,6 +1,6 @@
 (defsystem #:bullet-hell
   :name "bullet-hell"
-  :depends-on (:cl-opengl :sdl2)
+  :depends-on (:sdl2 :cl-opengl)
   :serial t
   :components ((:file "package")
                (:file "geometry")

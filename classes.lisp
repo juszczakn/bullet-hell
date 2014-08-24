@@ -7,8 +7,7 @@
 (defclass overlay (point)
   ((id :initform (gensym) :reader id)
    (size :initarg :size :initform 1 :accessor size)
-   (shape :initarg :shape :initform :circle :accessor shape)
-   (color :initform :white :initarg :color :accessor color)))
+   (shape :initarg :shape :initform :circle :accessor shape)))
 
 (defclass star (overlay)
   ((move-speed :initarg :move-speed :initform 1 :accessor move-speed)))
@@ -16,13 +15,16 @@
 (defclass bullet (overlay)
   ((power :initarg :power :initform 1 :accessor power)
    (dx :initarg :dx :initform 0 :accessor dx)
-   (dy :initarg :dy :initform -1 :accessor dy)))
+   (dy :initarg :dy :initform -10 :accessor dy)))
 
 (defclass entity (overlay)
   ((name :initform nil :initarg :name :accessor name)
    (health :initform 100 :initarg :health :accessor health)
-   (weapons :initform nil :initarg :weapons :accessor weapons)
-   (shield :initarg :shield :initform 0 :accessor shield)))
+   (weapons :initform (make-instance 'weapon) :initarg :weapons :accessor weapons)
+   (shield :initarg :shield :initform 0 :accessor shield)
+   (dx :initarg :dx :initform 0 :accessor dx)
+   (dy :initarg :dy :initform 0 :accessor dy)
+   (shooting-p :initarg :shooting-p :initform nil :accessor shooting-p)))
 
 (defclass player (entity)
   ())
@@ -60,3 +62,24 @@
                               (list jx jy jsize)))
       ;; todo: bother with other shapes later
       (t t))))
+
+(defgeneric shoot-bullet (e))
+
+(defmethod shoot-bullet ((e entity))
+  (with-slots (x y weapons) e
+    (let ((bullet (shoot-weapon weapons)))
+      (setf (x bullet) x)
+      (setf (y bullet) y)
+      (setf (dy bullet) 10)
+      bullet)))
+
+(defmethod shoot-bullet ((e player))
+  (let ((bullet (call-next-method)))
+    (with-slots (dx dy) bullet
+      (setf dx (+ dx (ceiling (/ (* *player-speed-multiplier* (dx *player*)) 5))))
+      (setf dy (+ dy (ceiling (/ (* *player-speed-multiplier* (dy *player*)) 5)))))
+    (setf *player-bullets* (cons bullet *player-bullets*))))
+
+(defgeneric shoot-weapon (w))
+(defmethod shoot-weapon ((w weapon))
+  (make-instance 'bullet))
