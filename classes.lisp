@@ -10,8 +10,13 @@
    (shape :initarg :shape :initform :circle :accessor shape)
    (color :initform :white :initarg :color :accessor color)))
 
+(defclass star (overlay)
+  ((move-speed :initarg :move-speed :initform 1 :accessor move-speed)))
+
 (defclass bullet (overlay)
-  ())
+  ((power :initarg :power :initform 1 :accessor power)
+   (dx :initarg :dx :initform 0 :accessor dx)
+   (dy :initarg :dy :initform -1 :accessor dy)))
 
 (defclass entity (overlay)
   ((name :initform nil :initarg :name :accessor name)
